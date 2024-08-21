@@ -30,6 +30,19 @@ export const fetchMultiplePokemonById = createAsyncThunk(
       return pokemonData;
     };
 
-    return await Promise.all(numberArray.map((el) => fetchAPI(el)));
+    const startTime = Date.now();
+
+    // 모든 API 호출 병렬로 처리
+    const results = await Promise.all(numberArray.map((el) => fetchAPI(el)));
+
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+
+    // 최소 로딩 시간(예: 1000ms) 보장
+    if (duration < 1000) {
+      await new Promise((resolve) => setTimeout(resolve, 1000 - duration));
+    }
+
+    return results;
   }
 );

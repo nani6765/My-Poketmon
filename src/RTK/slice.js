@@ -21,22 +21,9 @@ export const pokemonSlice = createSlice({
         state.placeholders -= size; // 실패 시, 빈 카드 수를 줄임
       })
       .addCase(fetchMultiplePokemonById.fulfilled, (state, action) => {
-        const endTime = Date.now();
-        const duration = endTime - action.meta.startTime;
-
-        if (duration < 10000) {
-          // 최소 로딩 시간보다 짧은 경우
-          setTimeout(() => {
-            state.loading = false;
-            state.data = [...state.data, ...action.payload];
-            state.placeholders = Math.max(state.placeholders - 20, 0); // 빈 카드 수 감소
-          }, 10000 - duration);
-        } else {
-          // 최소 로딩 시간을 넘긴 경우
-          state.loading = false;
-          state.data = [...state.data, ...action.payload];
-          state.placeholders = Math.max(state.placeholders - 20, 0); // 빈 카드 수 감소
-        }
+        state.loading = false;
+        state.data.push(...action.payload);
+        state.placeholders = Math.max(state.placeholders - size, 0);
       });
   },
 });
