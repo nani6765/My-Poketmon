@@ -7,6 +7,7 @@ export default function Detail() {
   const pokemon = useSelector(selectPokemonById(Number(pokemonId)));
 
   //pokemon이 undefined인 경우
+  // +로 pokemonId가 없는 경우에는 main route로 움직이도록
   if (!pokemon) {
     return <div>Loading...</div>;
   }
