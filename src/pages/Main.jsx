@@ -1,24 +1,37 @@
-import { useSelector } from 'react-redux';
+import React, { useCallback, useEffect, useState } from 'react';
+import { fetchMultiplePokemonById } from '@/RTK/thunk';
+import { useInView } from 'react-intersection-observer';
+import { useDispatch, useSelector } from 'react-redux';
 import { Card } from '../component/Card';
 
 export default function Main() {
-  const pokemonData = useSelector((state) => state.pokemon);
+  const dispatch = useDispatch();
 
-  /**
-   * pokemonData는 data array와 isLoading을 가지고 있는 object입니다.
-   * 고로 우리의 어플리케이션이 생성되고 종료될 때까지 false인 순간은 없습니다.
-   * 또한 쿼리의 설계상 하단의 if문에선 isLoading을 사용하는게 더 적절해 보이네요.
-   * isLoading이 true이고 data가 없다면 에러페이지를 만들어 보여준다면 더욱 좋겠죠.
-   */
-  if (!pokemonData || !pokemonData.data) {
-    return <div>Loading...</div>;
-  }
+  // 해당 라이브러리가 무엇을 어떻게 동작하는지는 몰라도 됩니다.
+  // ref(bottom)으로 넘겨준 html 태그가 화면에 보인다면 inView의 값은 true, 아니면 false입니다.
+  const { ref: bottom, inView } = useInView({
+    threshold: 0,
+  });
+  const [page, setPage] = useState(0);
+  const { loading, data: pokemonData } = useSelector((state) => state.pokemon);
+
+  const callNextPage = useCallback(() => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    dispatch(fetchMultiplePokemonById(nextPage));
+  }, [dispatch, page]);
+
+  useEffect(() => {
+    if (!loading && inView) {
+      callNextPage();
+    }
+  }, [callNextPage, dispatch, inView, loading]);
 
   return (
-    <>
-      {pokemonData.data.map((el) => (
-        <Card key={el.id} pokemon={el} />
-      ))}
-    </>
+    <React.Fragment>
+      {pokemonData &&
+        pokemonData.map((el) => <Card key={el.id} pokemon={el} />)}
+      <div ref={bottom} />
+    </React.Fragment>
   );
 }

@@ -4,9 +4,8 @@ import { fetchMultiplePokemonById } from './thunk';
 export const pokemonSlice = createSlice({
   name: 'pokemon',
   initialState: {
-    // data 오타
-    date: [],
-    loading: true,
+    data: [],
+    loading: false,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -19,7 +18,7 @@ export const pokemonSlice = createSlice({
       })
       .addCase(fetchMultiplePokemonById.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = action.payload;
+        state.data = [...state.data, ...action.payload];
       });
   },
 });
