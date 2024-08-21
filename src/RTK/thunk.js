@@ -1,5 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
+// maxPokemonId를 받는 이유는 총 몇개의 포켓몬을 불러올지 지정하기 위함입니다.
+// 그러니 해당 인자를 사용하여 Promise array를 만들어주는게 Dynamic한 사이트를 만들 수 있을 것 같습니다.
 export const fetchMultiplePokemonById = createAsyncThunk(
   'pokemon/fetchMultiplePokemonById',
   async (maxPokemonId) => {
