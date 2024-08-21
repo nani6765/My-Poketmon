@@ -4,6 +4,7 @@ import { fetchMultiplePokemonById } from './thunk';
 export const pokemonSlice = createSlice({
   name: 'pokemon',
   initialState: {
+    // data 오타
     date: [],
     loading: true,
   },
