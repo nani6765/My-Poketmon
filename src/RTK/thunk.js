@@ -1,17 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-const size = 20;
+export const size = 20;
 
 export const fetchMultiplePokemonById = createAsyncThunk(
   'pokemon/fetchMultiplePokemonById',
   async (page) => {
-    const prevData = (page - 1) * 20;
+    const prevData = (page - 1) * size;
     const startToIndex = prevData > 0 ? prevData : 0;
     const numberArray = Array.from(
       { length: size },
       (_, i) => i + 1 + startToIndex
     );
-    console.log('numberArray : ', numberArray);
 
     const fetchAPI = async (pokemonId) => {
       const response = await fetch(

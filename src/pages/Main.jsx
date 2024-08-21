@@ -6,14 +6,15 @@ import { Card } from '../component/Card';
 
 export default function Main() {
   const dispatch = useDispatch();
-
-  // 해당 라이브러리가 무엇을 어떻게 동작하는지는 몰라도 됩니다.
-  // ref(bottom)으로 넘겨준 html 태그가 화면에 보인다면 inView의 값은 true, 아니면 false입니다.
   const { ref: bottom, inView } = useInView({
     threshold: 0,
   });
   const [page, setPage] = useState(0);
-  const { loading, data: pokemonData } = useSelector((state) => state.pokemon);
+  const {
+    loading,
+    data: pokemonData,
+    placeholders,
+  } = useSelector((state) => state.pokemon);
 
   const callNextPage = useCallback(() => {
     const nextPage = page + 1;
@@ -30,7 +31,15 @@ export default function Main() {
   return (
     <React.Fragment>
       {pokemonData &&
-        pokemonData.map((el) => <Card key={el.id} pokemon={el} />)}
+        pokemonData.map((el) => (
+          <Card key={el.id} pokemon={el} isLoading={false} />
+        ))}
+
+      {/* 로딩 중일 때 빈 카드 컴포넌트들을 렌더링 */}
+      {Array.from({ length: placeholders }).map((_, index) => (
+        <Card key={`placeholder-${index}`} isLoading={true} />
+      ))}
+
       <div ref={bottom} />
     </React.Fragment>
   );

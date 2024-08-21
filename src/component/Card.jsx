@@ -1,9 +1,19 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const loadingAnimation = keyframes`
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+`;
 
 const CardContainer = styled.section`
   width: 150px;
+  height: 200px;
   border: 1px solid gray;
   display: flex;
   flex-direction: column;
@@ -18,14 +28,32 @@ const CardContainer = styled.section`
   img {
     width: 120px;
   }
+
+  &.loading {
+    background: linear-gradient(90deg, #f3f3f3 25%, #e0e0e0 50%, #f3f3f3 75%);
+    background-size: 200% 100%;
+    animation: ${loadingAnimation} 1.5s infinite;
+  }
 `;
 
-export const Card = ({ pokemon }) => {
+export const Card = ({ pokemon, isLoading }) => {
   const navigate = useNavigate();
+
   return (
-    <CardContainer onClick={() => navigate(`/detail/${pokemon.id}`)}>
-      <img src={pokemon.front} />
-      <div>{pokemon.name}</div>
+    <CardContainer
+      onClick={() => {
+        if (!isLoading) {
+          navigate(`/detail/${pokemon.id}`);
+        }
+      }}
+      className={isLoading ? 'loading' : ''}
+    >
+      {pokemon && (
+        <>
+          <img src={pokemon.front} />
+          <div>{pokemon.name}</div>
+        </>
+      )}
     </CardContainer>
   );
 };
@@ -41,5 +69,6 @@ Card.propTypes = {
     description: PropTypes.string,
     front: PropTypes.string.isRequired,
     back: PropTypes.string,
-  }).isRequired,
+  }),
+  isLoading: PropTypes.bool.isRequired,
 };
